@@ -60,6 +60,11 @@ function App(): JSX.Element {
     new DiagramTransition(canvasRef.current, transition);
   }, [petriNetRef]);
 
+  const onSimulate = useCallback(() => {
+    if (!diagramRef.current) return;
+    diagramRef.current.simulate();
+  }, []);
+
   return (
     <div className="App">
       <AppBar
@@ -76,7 +81,11 @@ function App(): JSX.Element {
         id="workspace"
         sx={{ display: "flex", height: "100vh", width: "100vw" }}
       >
-        <Sidebar onAddPlace={onAddPlace} onAddTransition={onAddTransition} />
+        <Sidebar
+          onAddPlace={onAddPlace}
+          onAddTransition={onAddTransition}
+          onSimulate={onSimulate}
+        />
         <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
           <Toolbar />
           <Grid container sx={{ flexGrow: 1 }}>

@@ -5,9 +5,14 @@ const drawerWidth = 280;
 interface SidebarProps {
   onAddPlace: () => void;
   onAddTransition: () => void;
+  onSimulate: () => void;
 }
 
-function Sidebar({ onAddPlace, onAddTransition }: SidebarProps): JSX.Element {
+function Sidebar({
+  onAddPlace,
+  onAddTransition,
+  onSimulate,
+}: SidebarProps): JSX.Element {
   return (
     <Drawer
       variant="permanent"
@@ -29,6 +34,11 @@ function Sidebar({ onAddPlace, onAddTransition }: SidebarProps): JSX.Element {
             Transition
           </Button>
         </Stack>
+      </Stack>
+      <Stack p={1}>
+        <Button fullWidth variant="contained" onClick={onSimulate}>
+          Simulate
+        </Button>
       </Stack>
     </Drawer>
   );
