@@ -1,25 +1,27 @@
 import Place from "../models/place";
 import { fabric as F } from "fabric";
+import DiagramNode from "./diagramNode";
+import { normalizeVector } from "./utils";
 
-class DiagramPlace {
+class DiagramPlace extends DiagramNode {
   place: Place;
   canvas: F.Canvas;
 
-  radius: number;
+  RADIUS: number = 75;
 
   // Canvas objects
   circle: F.Circle;
   name: F.Text;
   numToken: F.Text;
-  rootGroup: F.Group;
+  root: F.Group;
 
   constructor(canvas: F.Canvas, place: Place) {
+    super()
     this.place = place;
     this.canvas = canvas;
-    this.radius = 75;
 
     this.circle = new F.Circle({
-      radius: this.radius,
+      radius: this.RADIUS,
       stroke: "black",
       strokeWidth: 3,
       fill: "lightblue",
@@ -28,20 +30,20 @@ class DiagramPlace {
     this.name = new F.Text(place.id, {
       top: 20,
       originX: "center",
-      left: this.radius,
+      left: this.RADIUS,
     });
 
     this.numToken = new F.Textbox(place.tokens.toString(), {
       top: 70,
       originX: "center",
-      left: this.radius,
+      left: this.RADIUS,
     });
 
-    this.rootGroup = new F.Group([this.circle, this.name, this.numToken]);
-    this.rootGroup.hasControls = false;
-    this.rootGroup.data = {"model": this.place}
+    this.root = new F.Group([this.circle, this.name, this.numToken]);
+    this.root.hasControls = false;
+    this.root.data = { model: this.place, diagram: this };
 
-    this.canvas.add(this.rootGroup);
+    this.canvas.add(this.root);
 
     this.place.registerObserver(this);
   }
@@ -50,6 +52,15 @@ class DiagramPlace {
     this.numToken.set("text", this.place.tokens.toString());
     this.name.set("text", this.place.id);
     this.canvas.renderAll();
+  }
+
+  projectPointToBorder(point: F.Point): F.Point {
+    // Assume X and Y radius same
+    const scaledRadius = this.circle.getRadiusX()
+    const normalVector = point.subtract(this.root.getCenterPoint())
+    const centerToBorderVector = normalizeVector(normalVector).multiply(scaledRadius)
+
+    return this.root.getCenterPoint().add(centerToBorderVector);
   }
 }
 
