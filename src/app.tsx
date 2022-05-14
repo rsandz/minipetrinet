@@ -3,30 +3,27 @@ import React, {
   useEffect,
   useLayoutEffect,
   useRef,
-  useState,
 } from "react";
 import Diagram from "./components/diagram";
 import Sidebar from "./components/sidebar";
 import { AppBar, Toolbar, Typography, Grid, Box } from "@mui/material";
-import PetriNet from "./models/petrinet";
-import DiagramPlace from "./diagram/diagramPlace";
+import PetriNetDiagram from "./diagram/petriNetDiagram";
 import { fabric as F } from "fabric";
-import DiagramTransition from "./diagram/diagramTransition";
 import configureCanvas from "./diagram/diagramCanvas";
 
 function App(): JSX.Element {
-  const [workAreaSpace, setWorkAreaSpace] = useState([0, 0]);
   const workAreaRef = useRef<HTMLDivElement>(null);
+  const diagramRef = useRef<PetriNetDiagram | null>(null);
+  const canvasRef = useRef<F.Canvas | null>(null);
 
   const measureDiagramSpace = useCallback(() => {
-    if (!workAreaRef.current) {
-      return;
-    }
+    if (!workAreaRef.current) return;
+    if (!diagramRef.current) return;
 
-    setWorkAreaSpace([
-      workAreaRef.current.clientHeight,
+    diagramRef.current.setDimensions(
       workAreaRef.current.clientWidth,
-    ]);
+      workAreaRef.current.clientHeight
+    );
   }, []);
 
   useLayoutEffect(measureDiagramSpace, [measureDiagramSpace]);
@@ -40,25 +37,15 @@ function App(): JSX.Element {
 
   // ------------
 
-  const petriNetRef = useRef(new PetriNet());
-  const canvasRef = useRef<F.Canvas | null>(null);
-
   const onAddPlace = useCallback(() => {
-    if (!canvasRef.current) return;
-    const petrinet = petriNetRef.current;
-
-    const place = petrinet.createPlace();
-    new DiagramPlace(canvasRef.current, place);
-  }, [petriNetRef]);
+    if (!diagramRef.current) return;
+    diagramRef.current.addPlace();
+  }, []);
 
   const onAddTransition = useCallback(() => {
-    if (!canvasRef.current) return;
-    const petrinet = petriNetRef.current;
-
-    const transition = petrinet.createTransition(1.0);
-
-    new DiagramTransition(canvasRef.current, transition);
-  }, [petriNetRef]);
+    if (!diagramRef.current) return;
+    diagramRef.current.addTransition();
+  }, []);
 
   const onSimulate = useCallback(() => {
     if (!diagramRef.current) return;
@@ -91,10 +78,9 @@ function App(): JSX.Element {
           <Grid container sx={{ flexGrow: 1 }}>
             <Grid item xs={12} ref={workAreaRef}>
               <Diagram
-                canvasHeight={workAreaSpace[0]}
-                canvasWidth={workAreaSpace[1]}
                 onCanvasReady={(canvas) => {
                   configureCanvas(canvas);
+                  diagramRef.current = new PetriNetDiagram(canvas);
                   canvasRef.current = canvas;
                 }}
               />
