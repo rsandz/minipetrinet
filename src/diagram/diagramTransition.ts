@@ -27,7 +27,7 @@ class DiagramTransition extends DiagramNode {
 
     this.root = new F.Group([rectangle, this.probText]);
     this.root.hasControls = false;
-    this.root.data = { model: this.transition, diagram: this };
+    this.root.data = { diagram: this };
 
     this.canvas.add(this.root);
   }

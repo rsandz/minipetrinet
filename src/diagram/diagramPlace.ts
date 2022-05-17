@@ -40,8 +40,7 @@ class DiagramPlace extends DiagramNode {
     });
 
     this.root = new F.Group([this.circle, this.name, this.numToken]);
-    this.root.hasControls = false;
-    this.root.data = { model: this.place, diagram: this };
+    this.root.data = { diagram: this };
 
     this.canvas.add(this.root);
 
