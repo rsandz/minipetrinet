@@ -67,7 +67,11 @@ function bindComponentConnect(canvas: F.Canvas) {
     const targetComponent = e.currentTarget?.data?.diagram;
 
     if (!srcComponent || !targetComponent) return;
-    new DiagramArc(canvas, srcComponent, targetComponent);
+    try {
+      new DiagramArc(canvas, srcComponent, targetComponent);
+    } catch {
+      // If fail to create arc, then bail
+    }
   });
 }
 
