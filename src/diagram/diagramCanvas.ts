@@ -16,9 +16,6 @@ function bindComponentConnect(canvas: F.Canvas) {
     // If selecting something, don't make line
     if (canvas.getActiveObjects().length !== 0) return;
 
-    // Turn off multiselect box
-    canvas.selection = false;
-
     // Lock all movement and selection
     canvas.forEachObject((o) => {
       o.set("lockMovementX", true);
@@ -50,9 +47,6 @@ function bindComponentConnect(canvas: F.Canvas) {
       return;
     }
 
-    // Turn on multiselect box
-    canvas.selection = true;
-
     // Re-enable all movement
     canvas.forEachObject((o) => {
       o.set("lockMovementX", false);
@@ -80,14 +74,8 @@ function bindComponentConnect(canvas: F.Canvas) {
 function configureCanvas(canvas: F.Canvas) {
   canvas.allowTouchScrolling = false;
 
-  // Disable resizing of multiselect elements
-  canvas.on("selection:created", (e: any) => {
-    canvas.getActiveObject().set("hasControls", false);
-  });
-
-  canvas.on("selection:updated", (e: any) => {
-    canvas.getActiveObject().set("hasControls", false);
-  });
+  // Disable multiselect
+  canvas.selection = false;
 
   bindComponentConnect(canvas);
 }
