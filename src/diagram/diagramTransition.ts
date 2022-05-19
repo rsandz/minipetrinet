@@ -26,7 +26,6 @@ class DiagramTransition extends DiagramNode {
     this.probText = new F.Text(this.transition.probability.toFixed(1));
 
     this.root = new F.Group([rectangle, this.probText]);
-    this.root.hasControls = false;
     this.root.data = { diagram: this };
 
     this.canvas.add(this.root);
