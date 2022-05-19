@@ -16,7 +16,7 @@ class DiagramPlace extends DiagramNode {
   root: F.Group;
 
   constructor(canvas: F.Canvas, place: Place) {
-    super()
+    super();
     this.place = place;
     this.canvas = canvas;
 
@@ -55,9 +55,10 @@ class DiagramPlace extends DiagramNode {
 
   projectPointToBorder(point: F.Point): F.Point {
     // Assume X and Y radius same
-    const scaledRadius = this.circle.getRadiusX()
-    const normalVector = point.subtract(this.root.getCenterPoint())
-    const centerToBorderVector = normalizeVector(normalVector).multiply(scaledRadius)
+    const scaledRadius = this.circle.getRadiusX();
+    const normalVector = point.subtract(this.root.getCenterPoint());
+    const centerToBorderVector =
+      normalizeVector(normalVector).multiply(scaledRadius);
 
     return this.root.getCenterPoint().add(centerToBorderVector);
   }
