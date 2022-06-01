@@ -1,3 +1,5 @@
+import Arc from "./arc";
+import Node, { ResolveOpposite } from "./node";
 import Place from "./place";
 import Transition from "./transition";
 
@@ -6,13 +8,18 @@ import Transition from "./transition";
  */
 class PetriNet {
   places: Place[];
-  placeIndex: number;
   transitions: Transition[];
+  consumingArcs: Record<string, Arc<Place, Transition>[]>;
+  generatingArcs: Record<string, Arc<Transition, Place>[]>;
+
+  placeIndex: number;
   transitionIndex: number;
 
   constructor() {
     this.places = [];
     this.transitions = [];
+    this.consumingArcs = Object();
+    this.generatingArcs = Object();
 
     this.placeIndex = 0;
     this.transitionIndex = 0;
@@ -29,13 +36,46 @@ class PetriNet {
   }
 
   /**
+   * Delete specified place from this petri net.
+   */
+  deletePlace(place: Place): void {
+    this.places.splice(this.places.indexOf(place), 1);
+  }
+
+  /**
    * Create a transition in this petri net.
    */
   createTransition(fireProbability: number): Transition {
-    const transition = new Transition(fireProbability);
+    const transition = new Transition(
+      "transition" + this.transitionIndex.toString(),
+      fireProbability
+    );
     this.transitions.push(transition);
     this.transitionIndex++;
+
+    this.consumingArcs[transition.id] = []
+    this.generatingArcs[transition.id] = []
+
     return transition;
+  }
+
+  /**
+   * Delete specified transition from this petri net.
+   */
+  deleteTransition(transition: Transition): void {
+    this.transitions.splice(this.transitions.indexOf(place), 1);
+  }
+
+  connect(from: Transition, to: Place): void;
+  connect(from: Place, to: Transition): void;
+  connect(from: Place | Transition, to: Place | Transition): void {
+    if (from instanceof Place && to instanceof Transition) {
+      const arc = new Arc(1, from, to);
+      this.consumingArcs[to.id].push(arc);
+    } else if (from instanceof Transition && to instanceof Place) {
+      const arc = new Arc(1, from, to);
+      this.generatingArcs[from.id].push(arc);
+    }
   }
 
   /**
@@ -45,8 +85,30 @@ class PetriNet {
    */
   simulate(cycles: number = 1) {
     for (let i = 0; i < cycles; i++) {
-      this.transitions.forEach((transition) => transition.simulateConsume());
-      this.transitions.forEach((transition) => transition.simulateEject());
+      // Run all consumes first so that markers don't travel more than
+      // one transition in chains.
+      this.transitions.forEach((transition) => {
+        if (!transition.rollProbability()) {
+          return;
+        }
+        transition.firing = this.consumingArcs[transition.id].every(
+          (arc) => arc.input.tokens >= arc.multiplicity
+        );
+        if (transition.firing) {
+          this.consumingArcs[transition.id].forEach((arc) => {
+            arc.input.removeToken(arc.multiplicity);
+          });
+        }
+      });
+
+      this.transitions.forEach((transition) => {
+        if (transition.firing) {
+          this.generatingArcs[transition.id].forEach((arc) => {
+            arc.output.addToken(arc.multiplicity);
+          });
+        }
+        transition.firing = false;
+      });
     }
   }
 

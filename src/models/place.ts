@@ -1,6 +1,8 @@
-import { Observable } from "./observable";
+import Observable from "./observable";
 
-class Place extends Observable {
+type Events = "tokenAdded" | "tokenRemoved" | "delete";
+
+class Place extends Observable<Events> {
   tokens: number;
   id: string;
 
@@ -10,14 +12,14 @@ class Place extends Observable {
     this.id = id;
   }
 
-  addToken() {
-    this.tokens++;
-    this.notifyObservers();
+  addToken(amount: number = 1) {
+    this.tokens += amount;
+    this.fire("tokenAdded");
   }
 
-  removeToken() {
-    this.tokens--;
-    this.notifyObservers();
+  removeToken(amount: number = 1) {
+    this.tokens -= amount;
+    this.fire("tokenRemoved");
   }
 }
 
