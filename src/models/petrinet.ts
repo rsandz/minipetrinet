@@ -1,5 +1,4 @@
 import Arc from "./arc";
-import Node, { ResolveOpposite } from "./node";
 import Place from "./place";
 import Transition from "./transition";
 
@@ -76,16 +75,19 @@ class PetriNet {
     }
   }
 
-  connect(from: Transition, to: Place): void;
-  connect(from: Place, to: Transition): void;
-  connect(from: Place | Transition, to: Place | Transition): void {
+  connect(from: Transition, to: Place): Arc<Transition, Place>;
+  connect(from: Place, to: Transition): Arc<Place, Transition>;
+  connect(from: Place | Transition, to: Place | Transition): Arc<any, any> {
     if (from instanceof Place && to instanceof Transition) {
       const arc = new Arc(1, from, to);
       this.consumingArcs[to.id].push(arc);
+      return arc;
     } else if (from instanceof Transition && to instanceof Place) {
       const arc = new Arc(1, from, to);
       this.generatingArcs[from.id].push(arc);
+      return arc;
     }
+    throw new Error(`Cannot connect ${from} to ${to}`)
   }
 
   /**
