@@ -1,24 +1,39 @@
-interface Observer {
-    update: () => void;
-}
 
 /**
  * Implementation of Subject/Observable class.
  */
-class Observable {
-    observers: Observer[];
+class Observable<Events extends string> {
+    eventListeners: [Events, Function][]
 
     constructor() {
-        this.observers = [];
+        this.eventListeners = [];
     }
 
-    notifyObservers() {
-        this.observers.forEach(o => o.update());
+    /**
+     * Fire a specified event.
+     */
+    fire(event: Events) {
+        this.eventListeners.forEach((observer) => {
+            const [cbEvent, cb] = observer
+            if (cbEvent === event) {
+                cb()
+            }
+        })
     }
 
-    registerObserver(o: Observer) {
-        this.observers.push(o);
+    /**
+     * Register an event listener.
+     */
+    on(event: Events, cb: Function) {
+        this.eventListeners.push([event, cb])
+    }
+
+    /**
+     * Deregister an event listener.
+     */
+    off(event: Events, cb: Function) {
+        this.eventListeners.splice(this.eventListeners.indexOf([event, cb]), 1)
     }
 }
 
-export {Observable, Observer}
+export default Observable
