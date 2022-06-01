@@ -62,6 +62,10 @@ class DiagramPlace extends DiagramNode {
 
     return this.root.getCenterPoint().add(centerToBorderVector);
   }
+
+  delete(): void {
+    super.delete();
+  }
 }
 
 export default DiagramPlace;
