@@ -36,13 +36,6 @@ class PetriNet {
   }
 
   /**
-   * Delete specified place from this petri net.
-   */
-  deletePlace(place: Place): void {
-    this.places.splice(this.places.indexOf(place), 1);
-  }
-
-  /**
    * Create a transition in this petri net.
    */
   createTransition(fireProbability: number): Transition {
@@ -53,8 +46,8 @@ class PetriNet {
     this.transitions.push(transition);
     this.transitionIndex++;
 
-    this.consumingArcs[transition.id] = []
-    this.generatingArcs[transition.id] = []
+    this.consumingArcs[transition.id] = [];
+    this.generatingArcs[transition.id] = [];
 
     return transition;
   }
@@ -62,8 +55,25 @@ class PetriNet {
   /**
    * Delete specified transition from this petri net.
    */
-  deleteTransition(transition: Transition): void {
-    this.transitions.splice(this.transitions.indexOf(place), 1);
+  delete(node: Transition): void;
+  /**
+   * Delete specified place from this petri net.
+   */
+  delete(node: Place): void;
+  delete(node: Place | Transition): void {
+    if (node instanceof Place) {
+      this.places.splice(this.places.indexOf(node), 1);
+      Object.entries(this.consumingArcs).forEach(([key, arcs]) => {
+        this.consumingArcs[key] = arcs.filter((arc) => arc.input !== node);
+      });
+      Object.entries(this.generatingArcs).forEach(([key, arcs]) => {
+        this.generatingArcs[key] = arcs.filter((arc) => arc.output !== node);
+      });
+    } else {
+      this.transitions.splice(this.transitions.indexOf(node), 1);
+      delete this.consumingArcs[node.id];
+      delete this.generatingArcs[node.id];
+    }
   }
 
   connect(from: Transition, to: Place): void;
