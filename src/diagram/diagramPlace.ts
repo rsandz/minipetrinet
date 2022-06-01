@@ -44,7 +44,9 @@ class DiagramPlace extends DiagramNode {
 
     this.canvas.add(this.root);
 
-    this.place.registerObserver(this);
+    this.place.on("update", () => {
+      this.update();
+    });
   }
 
   update() {

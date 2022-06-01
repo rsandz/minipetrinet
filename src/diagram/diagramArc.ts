@@ -28,7 +28,6 @@ class DiagramArc {
       this.diagramPlace = src;
       this.diagramTransition = tgt;
       this.direction = "INPUT";
-      this.diagramTransition.transition.addInPlace(this.diagramPlace.place);
     } else if (
       src instanceof DiagramTransition &&
       tgt instanceof DiagramPlace
@@ -36,7 +35,6 @@ class DiagramArc {
       this.diagramPlace = tgt;
       this.diagramTransition = src;
       this.direction = "OUTPUT";
-      this.diagramTransition.transition.addOutPlace(this.diagramPlace.place);
     } else {
       throw Error(`Cannot connect: ${src}, ${tgt}`);
     }

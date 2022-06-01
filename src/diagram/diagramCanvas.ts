@@ -1,11 +1,12 @@
 import { fabric as F } from "fabric";
 import Arrow from "./arrow";
 import DiagramArc from "./diagramArc";
+import PetriNetDiagram from "./petriNetDiagram";
 
 /**
  * Draw arrow when modifier is pressed and connect models.
  */
-function bindComponentConnect(canvas: F.Canvas) {
+function bindComponentConnect(canvas: F.Canvas, petrinet: PetriNetDiagram) {
   let arrow: Arrow | null = null;
   let connecting = false;
 
@@ -68,20 +69,20 @@ function bindComponentConnect(canvas: F.Canvas) {
 
     if (!srcComponent || !targetComponent) return;
     try {
-      new DiagramArc(canvas, srcComponent, targetComponent);
+      petrinet.connect(srcComponent, targetComponent);
     } catch {
       // If fail to create arc, then bail
     }
   });
 }
 
-function configureCanvas(canvas: F.Canvas) {
+function configureCanvas(canvas: F.Canvas, petrinet: PetriNetDiagram) {
   canvas.allowTouchScrolling = false;
 
   // Disable multiselect
   canvas.selection = false;
 
-  bindComponentConnect(canvas);
+  bindComponentConnect(canvas, petrinet);
 }
 
 export default configureCanvas;

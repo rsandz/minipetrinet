@@ -9,7 +9,6 @@ import Sidebar from "./components/sidebar";
 import { AppBar, Toolbar, Typography, Grid, Box } from "@mui/material";
 import PetriNetDiagram from "./diagram/petriNetDiagram";
 import { fabric as F } from "fabric";
-import configureCanvas from "./diagram/diagramCanvas";
 
 function App(): JSX.Element {
   const workAreaRef = useRef<HTMLDivElement>(null);
@@ -79,7 +78,6 @@ function App(): JSX.Element {
             <Grid item xs={12} ref={workAreaRef}>
               <Diagram
                 onCanvasReady={(canvas) => {
-                  configureCanvas(canvas);
                   diagramRef.current = new PetriNetDiagram(canvas);
                   canvasRef.current = canvas;
                 }}
