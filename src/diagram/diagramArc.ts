@@ -4,10 +4,12 @@ import DiagramTransition from "./diagramTransition";
 
 import { fabric as F } from "fabric";
 import { vectorLength } from "./utils";
+import Arc from "../models/arc";
 
 type Component = DiagramPlace | DiagramTransition;
 
 class DiagramArc {
+  arc: Arc<unknown, unknown>;
   diagramPlace: DiagramPlace;
   diagramTransition: DiagramTransition;
   canvas: F.Canvas;
@@ -20,8 +22,14 @@ class DiagramArc {
   // Direction relative from transition.
   direction: "INPUT" | "OUTPUT";
 
-  constructor(canvas: F.Canvas, src: Component, tgt: Component) {
+  constructor(
+    canvas: F.Canvas,
+    src: Component,
+    tgt: Component,
+    arc: Arc<unknown, unknown>
+  ) {
     this.canvas = canvas;
+    this.arc = arc;
 
     // Bipartite graph can only connect place to transition and vice versa.
     if (src instanceof DiagramPlace && tgt instanceof DiagramTransition) {
@@ -44,13 +52,17 @@ class DiagramArc {
     this.updateArrow();
 
     // Register as observer so that arrow can be updated
-    this.diagramTransition.root.on("moving", () => {
-      this.updateArrow();
-    });
+    const onUpdate = () => this.updateArrow();
+    this.diagramTransition.root.on("moving", onUpdate);
+    this.diagramPlace.root.on("moving", onUpdate);
 
-    this.diagramPlace.root.on("moving", () => {
-      this.updateArrow();
-    });
+    const onDelete = () => {
+      this.arrow.remove();
+      this.arc.off("delete", onDelete);
+      this.diagramTransition.root.off("moving", onUpdate);
+      this.diagramPlace.root.off("moving", onUpdate);
+    };
+    this.arc.on("delete", onDelete);
   }
 
   updateArrow() {

@@ -44,9 +44,14 @@ class DiagramPlace extends DiagramNode {
 
     this.canvas.add(this.root);
 
-    this.place.on("update", () => {
-      this.update();
-    });
+    const onUpdate = () => this.update()
+    const onDelete = () => {
+      this.delete()
+      this.place.off("update", onUpdate);
+      this.place.off("delete", onDelete);
+    }
+    this.place.on("update", onUpdate);
+    this.place.on("delete", onDelete);
   }
 
   update() {
@@ -63,10 +68,6 @@ class DiagramPlace extends DiagramNode {
       normalizeVector(normalVector).multiply(scaledRadius);
 
     return this.root.getCenterPoint().add(centerToBorderVector);
-  }
-
-  delete(): void {
-    super.delete();
   }
 }
 

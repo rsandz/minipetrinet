@@ -29,6 +29,12 @@ class DiagramTransition extends DiagramNode {
     this.root.data = { diagram: this };
 
     this.canvas.add(this.root);
+
+    const onDelete = () => {
+      this.transition.off("delete", onDelete);
+      this.delete();
+    };
+    this.transition.on("delete", onDelete);
   }
 
   projectPointToBorder(point: F.Point): F.Point {

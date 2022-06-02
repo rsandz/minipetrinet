@@ -40,6 +40,17 @@ class PetriNetDiagram {
     new DiagramTransition(this.canvas, transition);
   }
 
+  delete(node: DiagramPlace): void;
+  delete(node: DiagramTransition): void;
+  delete(node: DiagramPlace | DiagramTransition): void {
+    if (node instanceof DiagramPlace) {
+      this.petrinet.delete(node.place);
+    }
+    else if (node instanceof DiagramTransition) {
+      this.petrinet.delete(node.transition)
+    }
+  }
+
   connect(from: DiagramPlace, to: DiagramTransition): DiagramArc;
   connect(from: DiagramTransition, to: DiagramPlace): DiagramArc;
   connect(
@@ -48,14 +59,14 @@ class PetriNetDiagram {
   ): DiagramArc {
     if (from instanceof DiagramPlace && to instanceof DiagramTransition) {
       const arc = this.petrinet.connect(from.place, to.transition);
-      const diagramArc = new DiagramArc(this.canvas, from, to);
+      const diagramArc = new DiagramArc(this.canvas, from, to, arc);
       return diagramArc;
     } else if (
       from instanceof DiagramTransition &&
       to instanceof DiagramPlace
     ) {
       const arc = this.petrinet.connect(from.transition, to.place);
-      const diagramArc = new DiagramArc(this.canvas, from, to);
+      const diagramArc = new DiagramArc(this.canvas, from, to, arc);
       return diagramArc;
     }
     throw new Error(`Cannot connect ${from} to ${to}`);
