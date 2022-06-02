@@ -1,6 +1,5 @@
 import { fabric as F } from "fabric";
 import Arrow from "./arrow";
-import DiagramArc from "./diagramArc";
 import PetriNetDiagram from "./petriNetDiagram";
 
 const deleteIcon = require("../images/delete.png");

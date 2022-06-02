@@ -1,4 +1,3 @@
-import { randomInt } from "crypto";
 import Observable from "./observable";
 
 type Events = "delete" | "update";
