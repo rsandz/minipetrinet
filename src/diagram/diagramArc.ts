@@ -15,9 +15,11 @@ class DiagramArc {
   canvas: F.Canvas;
 
   arrow: Arrow;
+  multiplicityText: F.Text;
 
   // Gap between arc and component
   GAP_LENGTH = 10;
+  MULTIPLICITY_TEXT_OFFSET = 25
 
   // Direction relative from transition.
   direction: "INPUT" | "OUTPUT";
@@ -49,10 +51,18 @@ class DiagramArc {
 
     // Set to [0, 0, 0, 0] as place holder.
     this.arrow = new Arrow(canvas, [0, 0, 0, 0], false);
-    this.updateArrow();
+    this.multiplicityText = new F.Text("");
+    this.multiplicityText.set({
+      selectable: false,
+      originX: "center",
+      originY: "center"
+    })
+
+    this.update();
+    this.canvas.add(this.multiplicityText);
 
     // Register as observer so that arrow can be updated
-    const onUpdate = () => this.updateArrow();
+    const onUpdate = () => this.update();
     this.diagramTransition.root.on("moving", onUpdate);
     this.diagramPlace.root.on("moving", onUpdate);
 
@@ -65,7 +75,7 @@ class DiagramArc {
     this.arc.on("delete", onDelete);
   }
 
-  updateArrow() {
+  update() {
     const placeBorderPoint = this.diagramPlace.projectPointToBorder(
       this.diagramTransition.root.getCenterPoint()
     );
@@ -93,6 +103,18 @@ class DiagramArc {
       this.arrow.setStart(transitionArrowPoint.x, transitionArrowPoint.y);
       this.arrow.setEnd(placeArrowPoint.x, placeArrowPoint.y);
     }
+
+    const normalVector = new F.Point(diffVector.y, -diffVector.x)
+      .divide(diffVectorLength)
+      .multiply(25);
+    const halfDiffVector = diffVector.divide(2);
+    const textLocation = transitionBorderPoint
+      .add(halfDiffVector)
+      .subtract(normalVector);
+
+    this.multiplicityText.set("left", textLocation.x);
+    this.multiplicityText.set("top", textLocation.y);
+    this.multiplicityText.set("text", this.arc.multiplicity.toString());
   }
 }
 
