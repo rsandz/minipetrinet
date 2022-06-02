@@ -81,17 +81,27 @@ describe("petrinet", () => {
     const p1 = petri.createPlace();
     const p2 = petri.createPlace();
     const t1 = petri.createTransition(1.0);
+    const transitionDeleteCb = jest.fn()
+    const consumeArcDeleteCb = jest.fn()
+    const generateArcDeleteCb = jest.fn()
 
     p1.addToken()
 
-    petri.connect(p1, t1);
-    petri.connect(t1, p2);
-    petri.delete(t1);
+    const a1 = petri.connect(p1, t1);
+    const a2 = petri.connect(t1, p2);
+    t1.on("delete", transitionDeleteCb)
+    a1.on("delete", consumeArcDeleteCb)
+    a2.on("delete", generateArcDeleteCb)
 
+    petri.delete(t1);
     petri.simulate()
 
     expect(p1.tokens).toBe(1)
     expect(p2.tokens).toBe(0)
+    expect(Object.values(petri.generatingArcs).flat()).toEqual([])
+    expect(transitionDeleteCb).toBeCalled()
+    expect(consumeArcDeleteCb).toBeCalled()
+    expect(generateArcDeleteCb).toBeCalled()
   })
 
   test("Deletes a place", () => {
@@ -100,15 +110,22 @@ describe("petrinet", () => {
     const p1 = petri.createPlace();
     const p2 = petri.createPlace();
     const t1 = petri.createTransition(1.0);
+    const placeDeleteCb = jest.fn();
+    const consumeArcDeleteCb = jest.fn();
 
-    petri.connect(p1, t1);
+    const a1 = petri.connect(p1, t1);
     petri.connect(t1, p2);
-    petri.delete(p1);
+    p1.on("delete", placeDeleteCb);
+    a1.on("delete", consumeArcDeleteCb);
 
+    petri.delete(p1);
     petri.simulate()
 
     expect(p1.tokens).toBe(0)
     expect(p2.tokens).toBe(1)
+    expect(Object.values(petri.consumingArcs).flat()).toEqual([])
+    expect(placeDeleteCb).toBeCalled()
+    expect(consumeArcDeleteCb).toBeCalled()
   })
 
   test("simulates circular flow correctly", () => {

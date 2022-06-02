@@ -57,20 +57,34 @@ class PetriNet {
   delete(node: Transition): void;
   /**
    * Delete specified place from this petri net.
+   * 
+   * Fires the delete event on both place & transition + associated arcs.
    */
   delete(node: Place): void;
   delete(node: Place | Transition): void {
     if (node instanceof Place) {
-      this.places.splice(this.places.indexOf(node), 1);
+      const [place] = this.places.splice(this.places.indexOf(node), 1);
+      place.fire("delete");
+
       Object.entries(this.consumingArcs).forEach(([key, arcs]) => {
+        arcs
+          .filter((arc) => arc.input === node)
+          .forEach((arc) => arc.fire("delete"));
         this.consumingArcs[key] = arcs.filter((arc) => arc.input !== node);
       });
       Object.entries(this.generatingArcs).forEach(([key, arcs]) => {
+        arcs
+          .filter((arc) => arc.output === node)
+          .forEach((arc) => arc.fire("delete"));
         this.generatingArcs[key] = arcs.filter((arc) => arc.output !== node);
       });
     } else {
-      this.transitions.splice(this.transitions.indexOf(node), 1);
+      const [transition] = this.transitions.splice(this.transitions.indexOf(node), 1);
+      transition.fire("delete");
+
+      this.consumingArcs[node.id].forEach((arc) => arc.fire("delete"));
       delete this.consumingArcs[node.id];
+      this.generatingArcs[node.id].forEach((arc) => arc.fire("delete"));
       delete this.generatingArcs[node.id];
     }
   }
@@ -87,7 +101,7 @@ class PetriNet {
       this.generatingArcs[from.id].push(arc);
       return arc;
     }
-    throw new Error(`Cannot connect ${from} to ${to}`)
+    throw new Error(`Cannot connect ${from} to ${to}`);
   }
 
   /**

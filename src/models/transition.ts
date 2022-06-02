@@ -1,7 +1,9 @@
 import { randomInt } from "crypto";
 import Observable from "./observable";
 
-class Transition extends Observable<""> {
+type Events = "delete" | "update";
+
+class Transition extends Observable<Events> {
   id: string;
   probability: number;
   firing: boolean;
