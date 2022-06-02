@@ -1,5 +1,4 @@
 import { fabric as F } from "fabric";
-import { runInThisContext } from "vm";
 
 class Arrow {
   STROKE_WIDTH = 2;
@@ -7,7 +6,7 @@ class Arrow {
   canvas: F.Canvas;
   startPoint: F.Point;
   endPoint: F.Point;
-  rootGroup: F.Group;
+  root: F.Group;
 
   // Arrow body line
   line: F.Line;
@@ -49,7 +48,7 @@ class Arrow {
       }
     );
 
-    this.rootGroup = new F.Group([this.line, this.head], {
+    this.root = new F.Group([this.line, this.head], {
       hasControls: false,
       hasBorders: false,
       lockMovementX: false,
@@ -58,7 +57,7 @@ class Arrow {
     });
 
     this._updateHead();
-    this.canvas.add(this.rootGroup);
+    this.canvas.add(this.root);
   }
 
   _updateHead() {
@@ -67,7 +66,7 @@ class Arrow {
       this.endPoint.x - this.startPoint.x
     );
 
-    const localEndPoint = this.rootGroup.toLocalPoint(
+    const localEndPoint = this.root.toLocalPoint(
       this.endPoint,
       "center",
       "center"
@@ -85,12 +84,12 @@ class Arrow {
    * All line coords must be relative to the group.
    */
   _updateLine() {
-    const localStartPoint = this.rootGroup.toLocalPoint(
+    const localStartPoint = this.root.toLocalPoint(
       this.startPoint,
       "center",
       "center"
     );
-    const localEndPoint = this.rootGroup.toLocalPoint(
+    const localEndPoint = this.root.toLocalPoint(
       this.endPoint,
       "center",
       "center"
@@ -108,7 +107,7 @@ class Arrow {
     this.startPoint.setXY(x, y);
     this._updateLine();
     this._updateHead();
-    this.rootGroup.addWithUpdate(); // Force recalculate of group bounding box
+    this.root.addWithUpdate(); // Force recalculate of group bounding box
     this.canvas.renderAll();
   }
 
@@ -116,12 +115,12 @@ class Arrow {
     this.endPoint.setXY(x, y);
     this._updateLine();
     this._updateHead();
-    this.rootGroup.addWithUpdate(); // Force recalculate of group bounding box
+    this.root.addWithUpdate(); // Force recalculate of group bounding box
     this.canvas.renderAll();
   }
 
   remove() {
-    this.canvas.remove(this.rootGroup);
+    this.canvas.remove(this.root);
     this.canvas.renderAll();
   }
 }
