@@ -68,6 +68,7 @@ class DiagramArc {
 
     const onDelete = () => {
       this.arrow.remove();
+      this.canvas.remove(this.multiplicityText)
       this.arc.off("delete", onDelete);
       this.diagramTransition.root.off("moving", onUpdate);
       this.diagramPlace.root.off("moving", onUpdate);
