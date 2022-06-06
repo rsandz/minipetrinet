@@ -1,18 +1,22 @@
 import { fabric as F } from "fabric";
+import Observable from "../models/observable";
 import PetriNet from "../models/petrinet";
 import DiagramArc from "./diagramArc";
 import configureCanvas from "./diagramCanvas";
 import DiagramPlace from "./diagramPlace";
 import DiagramTransition from "./diagramTransition";
 
+type PetriNetDiagramEvents = "select";
+
 /**
  * Represents the petrinet diagram on the canvas.
  */
-class PetriNetDiagram {
+class PetriNetDiagram extends Observable<PetriNetDiagramEvents> {
   canvas: F.Canvas;
   petrinet: PetriNet;
 
   constructor(canvas: F.Canvas) {
+    super();
     this.canvas = canvas;
     this.petrinet = new PetriNet();
     configureCanvas(this.canvas, this);
@@ -45,9 +49,8 @@ class PetriNetDiagram {
   delete(node: DiagramPlace | DiagramTransition): void {
     if (node instanceof DiagramPlace) {
       this.petrinet.delete(node.place);
-    }
-    else if (node instanceof DiagramTransition) {
-      this.petrinet.delete(node.transition)
+    } else if (node instanceof DiagramTransition) {
+      this.petrinet.delete(node.transition);
     }
   }
 
@@ -74,6 +77,18 @@ class PetriNetDiagram {
 
   simulate() {
     this.petrinet.simulate();
+  }
+
+  on(event: "select", cb: (node: DiagramPlace | DiagramTransition) => void) {
+    this.eventListeners.push(["select", cb]);
+  }
+
+  fire(event: "select", node: DiagramPlace | DiagramTransition) {
+    this.eventListeners.forEach(([eventName, cb]) => {
+      if (eventName === event) {
+        cb(node);
+      }
+    });
   }
 }
 

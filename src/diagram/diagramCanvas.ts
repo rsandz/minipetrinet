@@ -1,5 +1,7 @@
 import { fabric as F } from "fabric";
 import Arrow from "./arrow";
+import DiagramPlace from "./diagramPlace";
+import DiagramTransition from "./diagramTransition";
 import PetriNetDiagram from "./petriNetDiagram";
 
 const deleteIcon = require("../images/delete.png");
@@ -90,7 +92,7 @@ function configureDelete(petrinet: PetriNetDiagram) {
     mouseUpHandler: (event, transform) => {
       const target = transform.target;
       if (target.data.diagram && target.data.diagram.delete) {
-        petrinet.delete(target.data.diagram)
+        petrinet.delete(target.data.diagram);
       }
       return true;
     },
@@ -121,6 +123,26 @@ function configureDelete(petrinet: PetriNetDiagram) {
   });
 }
 
+function bindSelectListener(canvas: F.Canvas, petrinet: PetriNetDiagram) {
+  const handleSelection = ({selected}: {selected: F.Object[]}) => {
+    if (selected.length === 0) {
+      return;
+    }
+    const node = selected[0].data?.diagram;
+    if (
+      node instanceof DiagramPlace ||
+      node instanceof DiagramTransition
+    ) {
+      petrinet.fire("select", node);
+    }
+  };
+
+  // @ts-ignore Since types for this event handling is not properly defined in fabric.
+  canvas.on("selection:updated", handleSelection);
+  // @ts-ignore
+  canvas.on("selection:created", handleSelection);
+}
+
 function configureCanvas(canvas: F.Canvas, petrinet: PetriNetDiagram) {
   canvas.allowTouchScrolling = false;
 
@@ -128,7 +150,8 @@ function configureCanvas(canvas: F.Canvas, petrinet: PetriNetDiagram) {
   canvas.selection = false;
 
   bindComponentConnect(canvas, petrinet);
-  configureDelete(petrinet)
+  bindSelectListener(canvas, petrinet);
+  configureDelete(petrinet);
 }
 
 export default configureCanvas;

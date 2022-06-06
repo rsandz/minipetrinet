@@ -12,7 +12,8 @@ class Observable<Events extends string> {
     /**
      * Fire a specified event.
      */
-    fire(event: Events) {
+    // @ts-ignore
+    fire(event: Events, ...args: unknown[]) {
         this.eventListeners.forEach((observer) => {
             const [cbEvent, cb] = observer
             if (cbEvent === event) {
