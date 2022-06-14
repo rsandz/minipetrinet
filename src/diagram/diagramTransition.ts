@@ -23,7 +23,8 @@ class DiagramTransition extends DiagramNode {
       stroke: "black",
     });
 
-    this.probText = new F.Text(this.transition.probability.toFixed(1));
+    this.probText = new F.Text("");
+    this.updateProbability();
 
     this.root = new F.Group([rectangle, this.probText]);
     this.root.data = { diagram: this };
@@ -35,6 +36,21 @@ class DiagramTransition extends DiagramNode {
       this.delete();
     };
     this.transition.on("delete", onDelete);
+    const onUpdate = () => {
+      this.transition.off("update", onUpdate);
+      this.updateProbability();
+      this.canvas.requestRenderAll();
+    };
+    this.transition.on("update", onUpdate);
+  }
+
+  updateProbability() {
+    this.probText.set(
+      "text",
+      (this.transition.probability * 100).toFixed(1) + "%"
+    );
+    this.probText.set("fontSize", 30);
+    this.probText.set("textAlign", "center");
   }
 
   projectPointToBorder(point: F.Point): F.Point {
