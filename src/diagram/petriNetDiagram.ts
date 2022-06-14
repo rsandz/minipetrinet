@@ -14,11 +14,13 @@ type PetriNetDiagramEvents = "select";
 class PetriNetDiagram extends Observable<PetriNetDiagramEvents> {
   canvas: F.Canvas;
   petrinet: PetriNet;
+  selected: null | DiagramPlace | DiagramTransition;
 
   constructor(canvas: F.Canvas) {
     super();
     this.canvas = canvas;
     this.petrinet = new PetriNet();
+    this.selected = null;
     configureCanvas(this.canvas, this);
   }
 
@@ -84,6 +86,7 @@ class PetriNetDiagram extends Observable<PetriNetDiagramEvents> {
   }
 
   fire(event: "select", node: DiagramPlace | DiagramTransition) {
+    this.selected = node;
     this.eventListeners.forEach(([eventName, cb]) => {
       if (eventName === event) {
         cb(node);
