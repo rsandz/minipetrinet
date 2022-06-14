@@ -24,6 +24,22 @@ class PetriNet {
     this.transitionIndex = 0;
   }
 
+  getPlace(id: string): Place {
+     const place = this.places.find((place) => place.id === id);
+     if (!place) {
+       throw new Error("pLace not found.")
+     }
+     return place;
+  }
+
+  getTransition(id: string): Transition {
+    const transition = this.transitions.find((transition) => transition.id === id);
+    if (!transition) {
+      throw new Error("transition not found.")
+    }
+    return transition;
+  }
+
   /**
    * Create a place in this petri net.
    */
