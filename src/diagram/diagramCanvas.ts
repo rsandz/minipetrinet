@@ -129,18 +129,19 @@ function bindSelectListener(canvas: F.Canvas, petrinet: PetriNetDiagram) {
       return;
     }
     const node = selected[0].data?.diagram;
-    if (
-      node instanceof DiagramPlace ||
-      node instanceof DiagramTransition
-    ) {
-      petrinet.fire("select", node);
-    }
+    petrinet.selected = node
+    petrinet.fire("select");
   };
 
   // @ts-ignore Since types for this event handling is not properly defined in fabric.
   canvas.on("selection:updated", handleSelection);
   // @ts-ignore
   canvas.on("selection:created", handleSelection);
+  // @ts-ignore
+  canvas.on("selection:cleared", () => {
+    petrinet.selected = null;
+    petrinet.fire("select");
+  });
 }
 
 function configureCanvas(canvas: F.Canvas, petrinet: PetriNetDiagram) {
