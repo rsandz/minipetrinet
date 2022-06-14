@@ -1,6 +1,6 @@
 import { Drawer, Button, Toolbar, Typography, Stack } from "@mui/material";
 
-const drawerWidth = 280;
+const drawerWidth = "15%";
 
 interface SidebarProps {
   onAddPlace: () => void;
@@ -26,7 +26,7 @@ function Sidebar({
         <Typography variant="body1" fontWeight="bold">
           Nodes:
         </Typography>
-        <Stack spacing={2} direction="row">
+        <Stack spacing={2} direction={{xs: "column", sm: "row"}}>
           <Button fullWidth variant="outlined" onClick={onAddPlace}>
             Place
           </Button>
