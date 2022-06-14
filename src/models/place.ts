@@ -12,6 +12,11 @@ class Place extends Observable<Events> {
     this.id = id;
   }
 
+  setToken(amount: number) {
+    this.tokens = amount;
+    this.fire("update");
+  }
+
   addToken(amount: number = 1) {
     this.tokens += amount;
     this.fire("update")
