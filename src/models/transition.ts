@@ -21,6 +21,11 @@ class Transition extends Observable<Events> {
     return Math.random() < this.probability;
   }
 
+  setProbability(probability: number) {
+    this.probability = probability;
+    this.fire("update");
+  }
+
 }
 
 export default Transition;
