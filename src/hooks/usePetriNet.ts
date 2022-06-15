@@ -86,6 +86,7 @@ export function usePlace(id: string) {
         tokens: place.tokens,
       });
     };
+    handleUpdate(); // Ensure state correct when props change
     place.on("update", handleUpdate);
     return () => place.off("update", handleUpdate);
   }, [place]);
@@ -105,13 +106,16 @@ export function useTransition(id: string) {
   });
 
   useEffect(() => {
-    transition.on("update", () => {
+    const handleUpdate = () => {
       setData({
         id: transition.id,
         probability: transition.probability,
       });
-    });
-  });
+    };
+    handleUpdate(); // Ensure state correct when props change
+    transition.on("update", handleUpdate);
+    return () => transition.off("update", handleUpdate);
+  }, [transition]);
 
   return {
     data,
