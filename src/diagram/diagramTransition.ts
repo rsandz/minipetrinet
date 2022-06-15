@@ -33,11 +33,12 @@ class DiagramTransition extends DiagramNode {
 
     const onDelete = () => {
       this.transition.off("delete", onDelete);
+      this.transition.off("update", onUpdate);
       this.delete();
     };
     this.transition.on("delete", onDelete);
+
     const onUpdate = () => {
-      this.transition.off("update", onUpdate);
       this.updateProbability();
       this.canvas.requestRenderAll();
     };
