@@ -13,7 +13,10 @@ const TransitionEditor = ({
 
   const handleOnProbabilityChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setProbability(parseFloat(e.target.value) / 100);
+      let probability_percent = parseFloat(e.target.value);
+      probability_percent = isNaN(probability_percent) ? 0 : probability_percent;
+      probability_percent = Math.min(100, Math.max(0, probability_percent));
+      setProbability(probability_percent / 100.0);
     },
     [setProbability]
   );
