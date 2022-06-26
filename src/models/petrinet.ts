@@ -1,11 +1,14 @@
 import Arc from "./arc";
+import Observable from "./observable";
 import Place from "./place";
 import Transition from "./transition";
+
+type PetriNetEvents = "simulate"
 
 /**
  * Represents a petri net that can be simulated.
  */
-class PetriNet {
+class PetriNet extends Observable<PetriNetEvents> {
   places: Place[];
   transitions: Transition[];
   consumingArcs: Record<string, Arc<Place, Transition>[]>;
@@ -15,6 +18,7 @@ class PetriNet {
   transitionIndex: number;
 
   constructor() {
+    super();
     this.places = [];
     this.transitions = [];
     this.consumingArcs = Object();
@@ -152,6 +156,7 @@ class PetriNet {
         transition.firing = false;
       });
     }
+    this.fire("simulate");
   }
 
   /**
