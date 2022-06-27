@@ -5,6 +5,9 @@ import Transition from "./transition";
 
 type PetriNetEvents = "simulate"
 
+// Maps id to number of tokens.
+export type MarkingMap = Record<string, number>;
+
 /**
  * Represents a petri net that can be simulated.
  */
@@ -162,8 +165,11 @@ class PetriNet extends Observable<PetriNetEvents> {
   /**
    * Get markings array which represent tokens at each place.
    */
-  getMarkings(): number[] {
-    return this.places.map((place) => place.tokens);
+  getMarkings(): MarkingMap {
+    return this.places.reduce((acc, place) => ({
+      ...acc, 
+      [place.id]: place.tokens
+    }), {})
   }
 }
 
