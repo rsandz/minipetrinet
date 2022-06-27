@@ -5,6 +5,8 @@
 Mini Petri Net simulates a [petri net](https://en.wikipedia.org/wiki/Petri_net) on your browser.
 Petri nets have a multitude of application in fields like reliability engineering, process control and many more!
 
+This app has been deployed onto github page. Check it out [here](http://rsandz.github.io/minipetrinet)
+
 ## Running the App
 
 The project uses [create-react-app](https://reactjs.org/docs/create-a-new-react-app.html) and commands 
