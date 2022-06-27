@@ -81,28 +81,28 @@ describe("petrinet", () => {
     const p1 = petri.createPlace();
     const p2 = petri.createPlace();
     const t1 = petri.createTransition(1.0);
-    const transitionDeleteCb = jest.fn()
-    const consumeArcDeleteCb = jest.fn()
-    const generateArcDeleteCb = jest.fn()
+    const transitionDeleteCb = jest.fn();
+    const consumeArcDeleteCb = jest.fn();
+    const generateArcDeleteCb = jest.fn();
 
-    p1.addToken()
+    p1.addToken();
 
     const a1 = petri.connect(p1, t1);
     const a2 = petri.connect(t1, p2);
-    t1.on("delete", transitionDeleteCb)
-    a1.on("delete", consumeArcDeleteCb)
-    a2.on("delete", generateArcDeleteCb)
+    t1.on("delete", transitionDeleteCb);
+    a1.on("delete", consumeArcDeleteCb);
+    a2.on("delete", generateArcDeleteCb);
 
     petri.delete(t1);
-    petri.simulate()
+    petri.simulate();
 
-    expect(p1.tokens).toBe(1)
-    expect(p2.tokens).toBe(0)
-    expect(Object.values(petri.generatingArcs).flat()).toEqual([])
-    expect(transitionDeleteCb).toBeCalled()
-    expect(consumeArcDeleteCb).toBeCalled()
-    expect(generateArcDeleteCb).toBeCalled()
-  })
+    expect(p1.tokens).toBe(1);
+    expect(p2.tokens).toBe(0);
+    expect(Object.values(petri.generatingArcs).flat()).toEqual([]);
+    expect(transitionDeleteCb).toBeCalled();
+    expect(consumeArcDeleteCb).toBeCalled();
+    expect(generateArcDeleteCb).toBeCalled();
+  });
 
   test("Deletes a place", () => {
     const petri = new PetriNet();
@@ -119,14 +119,14 @@ describe("petrinet", () => {
     a1.on("delete", consumeArcDeleteCb);
 
     petri.delete(p1);
-    petri.simulate()
+    petri.simulate();
 
-    expect(p1.tokens).toBe(0)
-    expect(p2.tokens).toBe(1)
-    expect(Object.values(petri.consumingArcs).flat()).toEqual([])
-    expect(placeDeleteCb).toBeCalled()
-    expect(consumeArcDeleteCb).toBeCalled()
-  })
+    expect(p1.tokens).toBe(0);
+    expect(p2.tokens).toBe(1);
+    expect(Object.values(petri.consumingArcs).flat()).toEqual([]);
+    expect(placeDeleteCb).toBeCalled();
+    expect(consumeArcDeleteCb).toBeCalled();
+  });
 
   test("simulates circular flow correctly", () => {
     const petri = new PetriNet();
@@ -143,11 +143,17 @@ describe("petrinet", () => {
     petri.connect(t2, p1);
 
     p1.addToken();
-    expect(petri.getMarkings()).toEqual([1, 0]);
+    expect(petri.getMarkings()).toEqual({
+      place0: 1,
+      place1: 0,
+    });
 
     petri.simulate(1);
     // Should not move token from p1 to p2, then from p2 to p1.
-    expect(petri.getMarkings()).toEqual([0, 1]);
+    expect(petri.getMarkings()).toEqual({
+      place0: 0,
+      place1: 1,
+    });
   });
 
   test("generate lots of token simulation", () => {
@@ -162,6 +168,8 @@ describe("petrinet", () => {
 
     petri.simulate(1000);
 
-    expect(petri.getMarkings()).toEqual([2000]);
+    expect(petri.getMarkings()).toEqual({
+      place0: 2000,
+    });
   });
 });
