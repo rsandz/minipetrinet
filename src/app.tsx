@@ -7,12 +7,21 @@ import React, {
 } from "react";
 import Diagram from "./components/diagram";
 import Sidebar from "./components/sidebar";
-import { AppBar, Toolbar, Typography, Grid, Box } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Grid,
+  Box,
+  IconButton,
+} from "@mui/material";
+import HelpIcon from "@mui/icons-material/Help";
 import PetriNetDiagram from "./diagram/petriNetDiagram";
 import { fabric as F } from "fabric";
 import ObjectBar from "./components/objectbar";
 import PetriNetContext from "./hooks/usePetriNet";
 import PetriNet from "./models/petrinet";
+import HelpModal from "./components/helpModal";
 
 function App(): JSX.Element {
   const workAreaRef = useRef<HTMLDivElement>(null);
@@ -21,6 +30,8 @@ function App(): JSX.Element {
   const canvasRef = useRef<F.Canvas | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_ready, setReady] = useState(false);
+
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const measureDiagramSpace = useCallback(() => {
     if (!workAreaRef.current) return;
@@ -84,6 +95,13 @@ function App(): JSX.Element {
             <Typography variant="h6" color="inherit" component="div">
               MiniPetriNet
             </Typography>
+            <IconButton
+              color="inherit"
+              onClick={() => setHelpOpen(true)}
+              sx={{ marginLeft: "auto" }}
+            >
+              <HelpIcon />
+            </IconButton>
           </Toolbar>
         </AppBar>
         <Box
@@ -106,6 +124,7 @@ function App(): JSX.Element {
           <ObjectBar />
         </Box>
       </div>
+      <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} />
     </PetriNetContext.Provider>
   );
 }
