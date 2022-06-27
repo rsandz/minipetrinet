@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/minipetrinet/static/css/main.cfb69069.css",
-    "main.js": "/minipetrinet/static/js/main.f1bed8c2.js",
+    "main.js": "/minipetrinet/static/js/main.c14bb5cd.js",
     "static/media/roboto-all-500-normal.woff": "/minipetrinet/static/media/roboto-all-500-normal.52cb737b682eb9661ee1.woff",
     "static/media/roboto-all-700-normal.woff": "/minipetrinet/static/media/roboto-all-700-normal.ef6d1d09b20b877fee4e.woff",
     "static/media/roboto-all-400-normal.woff": "/minipetrinet/static/media/roboto-all-400-normal.376ea5d93f71583052f6.woff",
@@ -36,10 +36,10 @@
     "static/media/roboto-greek-ext-700-normal.woff2": "/minipetrinet/static/media/roboto-greek-ext-700-normal.9674bc0ae12c2551d9d1.woff2",
     "index.html": "/minipetrinet/index.html",
     "main.cfb69069.css.map": "/minipetrinet/static/css/main.cfb69069.css.map",
-    "main.f1bed8c2.js.map": "/minipetrinet/static/js/main.f1bed8c2.js.map"
+    "main.c14bb5cd.js.map": "/minipetrinet/static/js/main.c14bb5cd.js.map"
   },
   "entrypoints": [
     "static/css/main.cfb69069.css",
-    "static/js/main.f1bed8c2.js"
+    "static/js/main.c14bb5cd.js"
   ]
 }
